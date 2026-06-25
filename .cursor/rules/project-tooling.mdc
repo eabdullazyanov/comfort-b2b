@@ -22,9 +22,14 @@ updates. Do not hand-write dependency versions in `package.json`.
   ESLint 10, which the plugin ecosystem does not support yet).
 - Config files are TypeScript: `eslint.config.ts` (loaded via `jiti`) and
   `jest.config.ts` (loaded natively by Jest 30 under Node type-stripping).
-  There are NO `.js` / `.mjs` / `.cjs` files in the repo - keep it that way.
+  The ONLY `.js` files in the repo are the React Native app's CommonJS
+  config/entry files (`packages/mobile/{metro.config.js,babel.config.js,index.js}`);
+  everything else stays `.ts`/`.tsx`. See `mobile-rn-app.mdc`.
 - New root-level `.ts` config/tooling files must be added to `tsconfig.json`
   `include` so `yarn typecheck` actually covers them (otherwise it's a blind spot).
 - Node 22 is pinned via `.nvmrc` + `engines`; TS is strict
   (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`).
 - Tests run via `@swc/jest`; node-modules linker (not PnP) for Metro/RN.
+- `@comfort-b2b/backend` is ESM run directly by Node (type-stripping), so its
+  relative imports MUST include the `.ts` extension (e.g. `import "./env.ts"`),
+  and its `tsconfig.json` sets `allowImportingTsExtensions: true` so `tsc` agrees.

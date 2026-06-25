@@ -2,11 +2,39 @@
   "name": "@comfort-b2b/mobile",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios"
   },
   "dependencies": {
-    "@comfort-b2b/shared": "workspace:^"
+    "@comfort-b2b/shared": "workspace:^",
+    "@react-navigation/native": "^7.3.4",
+    "@react-navigation/native-stack": "^7.17.6",
+    "axios": "^1.18.1",
+    "i18next": "^26.3.2",
+    "mobx": "^6.16.1",
+    "mobx-react-lite": "^4.1.1",
+    "react": "19.2.3",
+    "react-i18next": "^17.0.8",
+    "react-native": "0.86.0",
+    "react-native-config": "^1.6.1",
+    "react-native-paper": "^5.15.3",
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-screens": "^4.25.2",
+    "react-native-vector-icons": "^10.3.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native-community/cli-platform-android": "20.1.0",
+    "@react-native-community/cli-platform-ios": "20.1.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/metro-config": "0.86.0",
+    "@types/react": "^19.2.0"
   }
 }

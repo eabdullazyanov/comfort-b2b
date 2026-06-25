@@ -23,6 +23,11 @@ export default defineConfig([
     "**/coverage/**",
     "packages/mobile/android/**",
     "packages/mobile/ios/**",
+    "packages/mobile/vendor/**",
+    // RN-managed CommonJS config/entry files (the only `.js` files in the repo).
+    "packages/mobile/metro.config.js",
+    "packages/mobile/babel.config.js",
+    "packages/mobile/index.js",
   ]),
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

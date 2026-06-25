@@ -17,6 +17,8 @@
     "knip": "knip",
     "test": "jest",
     "check": "yarn typecheck && yarn lint && yarn knip && yarn test && yarn format:check",
+    "start": "yarn workspace @comfort-b2b/mobile start",
+    "pods": "cd packages/mobile/ios && bundle install && bundle exec pod install",
     "prepare": "husky"
   },
   "devDependencies": {

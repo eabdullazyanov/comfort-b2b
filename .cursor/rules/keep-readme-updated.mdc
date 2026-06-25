@@ -1,0 +1,31 @@
+---
+description: Keep the root README.md in sync with the codebase
+alwaysApply: true
+---
+
+# Keep `README.md` current
+
+The root `README.md` is the human-facing source of truth for layout, how to run
+things, and architecture. Whenever a change makes it stale, **update it in the
+same turn** (not as a follow-up).
+
+## Update the README when you change any of:
+
+- **Monorepo layout** — add/remove/rename a workspace or top-level config file
+  (update the "Layout" tree).
+- **Scripts / run steps** — root or workspace `package.json` scripts, the
+  `yarn check` pipeline, or how to start the backend / Metro / Android / iOS.
+- **Backend API** — add/remove/rename a route, or change an error code, status,
+  or how a simulated error is triggered (update the endpoint + error tables).
+- **Environment variables** — any var in `*.env.example` or read via `makeEnv`
+  (keep the config tables accurate).
+- **Architecture / conventions** — a new boundary-validation pattern, store, or
+  a change to an enforced convention.
+- **Phase status** — when a plan phase is completed, flip its row in the
+  "Status" table from ⏳ to ✅.
+
+## How
+
+- Edit only the affected sections; keep tables and the layout tree accurate.
+- Don't document features that don't exist yet — mark planned work as pending
+  (⏳) rather than describing it as built.

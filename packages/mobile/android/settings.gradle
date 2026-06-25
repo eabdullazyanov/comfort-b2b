@@ -1,0 +1,9 @@
+// Monorepo (Yarn workspaces, node-modules linker): RN packages are hoisted to
+// the repo-root node_modules, so these point at ../../../node_modules (three
+// levels up from packages/mobile/android), not the default ../node_modules.
+pluginManagement { includeBuild("../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'ComfortB2B'
+include ':app'
+includeBuild('../../../node_modules/@react-native/gradle-plugin')

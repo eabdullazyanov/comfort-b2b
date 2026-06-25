@@ -31,3 +31,20 @@ yarn-error.log*
 # os / editor
 .DS_Store
 *.pem
+
+# react native (mobile) - native build artifacts
+packages/mobile/ios/Pods/
+packages/mobile/ios/build/
+packages/mobile/ios/*.xcworkspace
+packages/mobile/ios/.xcode.env.local
+packages/mobile/android/.gradle/
+packages/mobile/android/build/
+packages/mobile/android/app/build/
+packages/mobile/android/local.properties
+packages/mobile/android/.cxx/
+packages/mobile/android/.kotlin/
+*.keystore
+!debug.keystore
+*.jsbundle
+.metro-health-check*
+vendor/bundle/

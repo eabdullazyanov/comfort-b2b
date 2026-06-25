@@ -6,3 +6,4 @@ coverage/
 yarn.lock
 packages/mobile/android/
 packages/mobile/ios/
+packages/mobile/vendor/

@@ -1,7 +1,7 @@
-import { generateCatalog } from "./catalog";
-import { env } from "./env";
-import { makeApp } from "./makeApp";
-import { makeRng } from "./rng";
+import { generateCatalog } from "./catalog.ts";
+import { env } from "./env.ts";
+import { makeApp } from "./makeApp.ts";
+import { makeRng } from "./rng.ts";
 
 const rng = makeRng(env.SEED);
 const catalog = generateCatalog(makeRng(env.SEED));

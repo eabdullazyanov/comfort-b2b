@@ -1,0 +1,61 @@
+---
+description: React Native app (packages/mobile) scaffold + monorepo conventions
+globs: packages/mobile/**
+---
+
+# Mobile RN app (`@comfort-b2b/mobile`)
+
+React Native **CLI** app (RN 0.86, react 19.2.3), scaffolded from the official
+`@react-native-community/cli` template, then integrated into the Yarn 4 monorepo.
+
+## CommonJS config/entry files (the repo's only `.js` files)
+- `metro.config.js`, `babel.config.js`, `index.js` are RN-managed CommonJS and
+  MUST stay `.js` (Metro/Babel load them via `require`). The mobile
+  `package.json` must NOT set `"type": "module"`.
+- They are excluded from ESLint only (`globalIgnores` in `eslint.config.ts`),
+  because the type-checked rules need files in a `tsconfig` and the no-`as`/
+  `func-style` rules are TS-oriented. Prettier STILL formats them, so keep them
+  in the repo style (double quotes, printWidth 80) like everything else.
+- App code (`App.tsx`, `src/**`) stays strict TS/TSX under the normal rules.
+
+## API boundary validation is resilient, not fatal
+Response validation must NOT throw on a success-shape mismatch. Use
+`Schema.safeParse(data)`; on failure, surface/log the validation error but
+**pass the payload through** (degrade gracefully) instead of crashing the app.
+Error envelopes (`ErrorResponse`) are still mapped to the typed `code` union.
+
+This is the ONE sanctioned place to use `as`: to pass the unvalidated payload
+through as the inferred type. Use a scoped
+`// eslint-disable-next-line @typescript-eslint/consistent-type-assertions`
+(the repo-wide rule bans `as` everywhere else — use `zod.parse`/`satisfies`/
+type guards instead).
+
+## Metro monorepo config
+`metro.config.js` sets `watchFolders: [monorepoRoot]` and
+`resolver.nodeModulesPaths: [app/node_modules, root/node_modules]` so Metro
+resolves hoisted deps and sibling workspaces (e.g. `@comfort-b2b/shared`).
+
+## tsconfig
+`packages/mobile/tsconfig.json` extends the repo `tsconfig.base.json` (NOT
+`@react-native/typescript-config`) and adds `"jsx": "react-jsx"` +
+`types: ["react", "react-native"]`.
+
+## knip
+Deps pre-installed for later phases (navigation, mobx, paper, axios, i18next,
+zod, etc.) are listed in `knip.json` under `workspaces["packages/mobile"]
+.ignoreDependencies`. **Remove each from that list when its consuming phase
+actually imports it.**
+
+## Native projects
+`android/` and `ios/` are committed but ignored by lint/prettier/knip and not
+covered by `yarn check`; native build artifacts are gitignored.
+
+- **iOS**: run `yarn pods` once (and after native dep/RN changes) before the
+  first `yarn ios`, else Xcode fails on missing `Pods-*.xcconfig`.
+- **Android monorepo paths**: deps hoist to the repo-root `node_modules`, so the
+  generated `../node_modules` paths are wrong. `android/settings.gradle` and
+  `android/app/build.gradle` are patched to `../../../node_modules` /
+  `../../../../node_modules` (root) for `@react-native/gradle-plugin`,
+  `react-native`, `@react-native/codegen`, and `cli.js`. Keep these if you
+  regenerate native projects. Validate config without a device via
+  `cd packages/mobile/android && ./gradlew :app:help`.
