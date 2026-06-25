@@ -25,10 +25,22 @@ Response validation must NOT throw on a success-shape mismatch. Use
 Error envelopes (`ErrorResponse`) are still mapped to the typed `code` union.
 
 This is the ONE sanctioned place to use `as`: to pass the unvalidated payload
-through as the inferred type. Use a scoped
+through as the inferred type (in `src/parseResponse.ts`). Use a scoped
 `// eslint-disable-next-line @typescript-eslint/consistent-type-assertions`
 (the repo-wide rule bans `as` everywhere else — use `zod.parse`/`satisfies`/
 type guards instead).
+
+## API client layer (`src/`)
+- `config.ts` (RN wiring: `Platform` + `react-native-config`) delegates to the
+  pure, unit-tested `makeMobileConfig.ts` (shared `makeEnv` + zod). Keep RN
+  imports out of testable helpers so Jest (node env, no RN preset) can run them.
+- `apiClient.ts` is the axios instance; its response interceptor funnels EVERY
+  failure through `toApiError.ts` so callers only ever catch one type: `ApiError`
+  (a custom `Error` subclass discriminated by `code: ErrorCode`).
+- `toApiError.ts` inspects the rejected value structurally with zod (NOT
+  `axios.isAxiosError`) so it stays dependency-free and testable with plain
+  objects; a valid `ErrorResponse` envelope is preserved, anything else degrades
+  to `SERVICE_UNAVAILABLE`.
 
 ## Metro monorepo config
 `metro.config.js` sets `watchFolders: [monorepoRoot]` and
@@ -41,10 +53,15 @@ resolves hoisted deps and sibling workspaces (e.g. `@comfort-b2b/shared`).
 `types: ["react", "react-native"]`.
 
 ## knip
-Deps pre-installed for later phases (navigation, mobx, paper, axios, i18next,
-zod, etc.) are listed in `knip.json` under `workspaces["packages/mobile"]
-.ignoreDependencies`. **Remove each from that list when its consuming phase
-actually imports it.**
+Deps pre-installed for later phases (navigation, mobx, paper, i18next, etc.) are
+listed in `knip.json` under `workspaces["packages/mobile"].ignoreDependencies`.
+**Remove each from that list when its consuming phase actually imports it.**
+(`axios`/`zod`/`react-native-config` were removed in Phase 5.)
+
+`src/apiClient.ts` is a temporary extra `entry` in `knip.json` so its (and
+`config.ts`'s) public surface isn't flagged as unused before the Phase 6 stores
+consume it. **Remove that entry once a store reachable from `App.tsx` imports
+the client.**
 
 ## Native projects
 `android/` and `ios/` are committed but ignored by lint/prettier/knip and not

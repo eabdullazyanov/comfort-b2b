@@ -63,10 +63,12 @@ yarn workspace @comfort-b2b/mobile android
 `react-native run-ios`/`run-android` start Metro automatically; run it on its own
 with `yarn start` if you prefer.
 
-**Reaching the backend from a device/emulator:** the host's `localhost` is
+**Reaching the backend from a device/emulator:** copy
+`packages/mobile/.env.example` → `packages/mobile/.env` and set `API_BASE_URL`
+(read by `react-native-config`, validated as a URL at startup — there is **no
+default**, so a missing/invalid value fails fast). The host's `localhost` is
 `http://10.0.2.2:3000` from the Android emulator and `http://localhost:3000`
-from the iOS simulator. (The typed runtime config that selects this lands in
-Phase 5 via `react-native-config`.)
+from the iOS simulator, so set it accordingly per build.
 
 ## Backend API
 
@@ -128,7 +130,7 @@ Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
 | 2     | `@comfort-b2b/shared` zod schemas + `makeEnv`      | ✅    |
 | 3     | `@comfort-b2b/backend` Express + seedable faults   | ✅    |
 | 4     | `@comfort-b2b/mobile` RN scaffold + Metro monorepo | ✅    |
-| 5     | Mobile api client (axios + zod) + runtime config   | ⏳    |
+| 5     | Mobile api client (axios + zod) + runtime config   | ✅    |
 | 6     | MobX stores (catalog/cart/analytics/order)         | ⏳    |
 | 7     | i18n (EN + RU)                                     | ⏳    |
 | 8     | Screens (Catalog → Cart → Confirm)                 | ⏳    |
