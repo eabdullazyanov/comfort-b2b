@@ -1,0 +1,8 @@
+node_modules/
+.yarn/
+dist/
+build/
+coverage/
+yarn.lock
+packages/mobile/android/
+packages/mobile/ios/

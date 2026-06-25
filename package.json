@@ -1,0 +1,42 @@
+{
+  "name": "comfort-b2b",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "yarn@4.9.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json && tsc -p packages/shared && tsc -p packages/backend && tsc -p packages/mobile",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip",
+    "test": "jest",
+    "check": "yarn typecheck && yarn lint && yarn knip && yarn test && yarn format:check",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@jest/globals": "^30.4.1",
+    "@swc/core": "^1.15.43",
+    "@swc/jest": "^0.2.39",
+    "@types/node": "^26.0.0",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-unicorn": "^56",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "jiti": "^2.7.0",
+    "knip": "^6.20.0",
+    "prettier": "^3.8.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0"
+  }
+}
