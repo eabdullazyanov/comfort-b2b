@@ -1,0 +1,37 @@
+---
+description: File/module structure conventions
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# File & Module Conventions
+
+## One util per file, named after the function
+`formatPrice.ts` exports `formatPrice`; `getMinimumOrder.ts` exports
+`getMinimumOrder`. Filenames are camelCase (utils/hooks) or PascalCase
+(components/classes).
+
+## No barrel files
+Never create re-export-only `index.ts`. Import directly from the defining
+module. `@comfort-b2b/shared` exposes explicit `package.json` `exports`
+subpaths (e.g. `@comfort-b2b/shared/constants`), so import:
+
+```ts
+import { MIN_ORDER } from "@comfort-b2b/shared/constants";
+```
+
+When adding a new shared module, add a matching `exports` subpath entry.
+
+## Co-located tests
+Put `foo.test.ts` next to `foo.ts`. Import test globals explicitly:
+
+```ts
+import { describe, expect, it } from "@jest/globals";
+```
+
+## Import order (lint-enforced)
+Groups `[builtin, external, internal, parent, sibling, index]`, a blank line
+between groups, alphabetized. `@comfort-b2b/*` and `@/*` count as internal.
+
+## DRY
+Extract reusable helpers/hooks/components instead of copy/pasting logic.

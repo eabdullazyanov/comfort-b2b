@@ -1,0 +1,30 @@
+---
+description: Monorepo tooling, commands, and pinned toolchain facts
+alwaysApply: true
+---
+
+# Project Tooling (comfort-b2b)
+
+Yarn 4 (Berry) workspaces monorepo. Packages are scoped `@comfort-b2b/*`
+(`shared`, `backend`, `mobile`). Always use `yarn`, never `npm`/`pnpm`.
+
+## Definition of done
+Before declaring ANY work complete, run `yarn check` from the repo root and make
+it fully green. It runs: `typecheck` -> `lint` -> `knip` -> `test` -> `format:check`.
+The Husky `pre-commit` hook runs the same `yarn check` (no lint-staged).
+
+## Adding dependencies
+Use `yarn add` / `yarn add -D` so versions resolve to latest and the lockfile
+updates. Do not hand-write dependency versions in `package.json`.
+
+## Pinned / non-obvious facts (do not "upgrade" without reason)
+- ESLint pinned to v9 and `eslint-plugin-unicorn` to v56 (newer majors target
+  ESLint 10, which the plugin ecosystem does not support yet).
+- Config files are TypeScript: `eslint.config.ts` (loaded via `jiti`) and
+  `jest.config.ts` (loaded natively by Jest 30 under Node type-stripping).
+  There are NO `.js` / `.mjs` / `.cjs` files in the repo - keep it that way.
+- New root-level `.ts` config/tooling files must be added to `tsconfig.json`
+  `include` so `yarn typecheck` actually covers them (otherwise it's a blind spot).
+- Node 22 is pinned via `.nvmrc` + `engines`; TS is strict
+  (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`).
+- Tests run via `@swc/jest`; node-modules linker (not PnP) for Metro/RN.

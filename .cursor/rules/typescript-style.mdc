@@ -1,0 +1,46 @@
+---
+description: TypeScript style rules enforced by ESLint
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript Style
+
+## No type assertions (`as` is banned by lint)
+Validate/narrow instead of asserting.
+
+```ts
+// BAD
+const data = json as Product;
+
+// GOOD - runtime-validated, single source of truth
+const data = Product.parse(json);
+
+// GOOD - object literal checked against a type
+const config = { port: 3000 } satisfies ServerConfig;
+```
+
+## Function declarations for named functions/components
+```ts
+// BAD
+const getTotal = (lines: CartLine[]) => ...;
+
+// GOOD
+function getTotal(lines: CartLine[]): number { ... }
+```
+Inline callbacks (`arr.map((x) => x.id)`) are fine.
+
+## Modern APIs
+Use `??`, `?.`, template literals; never `var`; prefer `const`.
+
+## Exhaustive discriminated unions
+```ts
+switch (error.code) {
+  case "SERVICE_UNAVAILABLE": return ...;
+  case "INSUFFICIENT_STOCK": return ...;
+  default: {
+    const _exhaustive: never = error.code;
+    throw new Error(`Unhandled: ${_exhaustive}`);
+  }
+}
+```
