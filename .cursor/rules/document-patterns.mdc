@@ -1,0 +1,30 @@
+---
+description: Capture new patterns and approaches as Cursor rules
+alwaysApply: true
+---
+
+# Document New Patterns via Cursor Rules
+
+Whenever a new pattern, approach, or convention is established during a chat
+(e.g. a testing strategy, an API design choice, a naming convention, a
+refactoring technique, a tooling decision), **immediately create or update a
+`.cursor/rules/*.mdc` file** to codify it.
+
+## When to create a rule
+
+- A decision is made that future AI sessions should follow consistently
+- A non-obvious workaround or constraint is discovered (e.g. a pinned dep,
+  a Node quirk, a framework limitation)
+- A repeating pattern emerges across multiple files or tasks
+- The user explicitly says "always do X" or "never do Y"
+
+## How to do it
+
+1. Pick a focused, descriptive filename: `feature-area.mdc`
+   (e.g. `api-error-handling.mdc`, `zod-schemas.mdc`)
+2. Set `alwaysApply: true` for universal conventions; use `globs` for
+   file-specific ones
+3. Keep the rule under 50 lines — one concern per rule
+4. Include a brief concrete example where helpful
+
+Do this **in the same turn** the pattern is established, not as a follow-up.
