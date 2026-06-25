@@ -31,16 +31,20 @@ through as the inferred type (in `src/parseResponse.ts`). Use a scoped
 type guards instead).
 
 ## API client layer (`src/`)
-- `config.ts` (RN wiring: `Platform` + `react-native-config`) delegates to the
-  pure, unit-tested `makeMobileConfig.ts` (shared `makeEnv` + zod). Keep RN
-  imports out of testable helpers so Jest (node env, no RN preset) can run them.
+- `config.ts` (RN wiring: `react-native-config`) delegates to the pure,
+  unit-tested `makeMobileConfig.ts` (shared `makeEnv` + zod). Keep RN imports out
+  of testable helpers so Jest (node env, no RN preset) can run them.
+- `API_BASE_URL` is REQUIRED (no default) - a missing/invalid value throws at
+  startup rather than silently defaulting (dangerous in prod). Set it per build
+  via `packages/mobile/.env` (see `.env.example`): `10.0.2.2` for the Android
+  emulator, `localhost` for the iOS simulator.
 - `apiClient.ts` is the axios instance; its response interceptor funnels EVERY
   failure through `toApiError.ts` so callers only ever catch one type: `ApiError`
   (a custom `Error` subclass discriminated by `code: ErrorCode`).
-- `toApiError.ts` inspects the rejected value structurally with zod (NOT
-  `axios.isAxiosError`) so it stays dependency-free and testable with plain
-  objects; a valid `ErrorResponse` envelope is preserved, anything else degrades
-  to `SERVICE_UNAVAILABLE`.
+- `toApiError.ts` uses `axios.isAxiosError` to detect transport errors, then
+  `ErrorResponse.safeParse(error.response?.data)` to preserve a valid backend
+  envelope; anything else (network failure, unexpected shape, non-axios throw)
+  degrades to `SERVICE_UNAVAILABLE`.
 
 ## Metro monorepo config
 `metro.config.js` sets `watchFolders: [monorepoRoot]` and
