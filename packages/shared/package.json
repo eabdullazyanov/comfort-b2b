@@ -4,9 +4,14 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./constants": "./src/constants.ts"
+    "./constants": "./src/constants.ts",
+    "./schemas": "./src/schemas.ts",
+    "./makeEnv": "./src/makeEnv.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
   }
 }
