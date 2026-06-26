@@ -17,6 +17,13 @@ React Native **CLI** app (RN 0.86, react 19.2.3), scaffolded from the official
   `func-style` rules are TS-oriented. Prettier STILL formats them, so keep them
   in the repo style (double quotes, printWidth 80) like everything else.
 - App code (`App.tsx`, `src/**`) stays strict TS/TSX under the normal rules.
+- `babel.config.js` must keep the `@babel/plugin-transform-export-namespace-from`
+  plugin: zod v4 ships `export * as ns from "..."`, which the RN babel preset
+  does NOT transform, so Metro otherwise fails to bundle zod. The plugin is
+  **pinned to `^7`** (a real mobile devDep) — its `8.x` line targets Babel 8,
+  but RN/Metro is on Babel 7. knip sees it via the babel config, so it isn't
+  flagged unused. Verify a bundle with: `yarn react-native bundle --platform
+  android --dev false --entry-file index.js --bundle-output /tmp/x.bundle`.
 
 ## API boundary validation is resilient, not fatal
 Response validation must NOT throw on a success-shape mismatch. Use
@@ -46,6 +53,45 @@ type guards instead).
   envelope; anything else (network failure, unexpected shape, non-axios throw)
   degrades to `SERVICE_UNAVAILABLE`.
 
+## Screens, navigation & store access (Phase 8)
+- UI is react-native-paper wrapped in a single `PaperProvider` (themed by
+  `useColorScheme`) in `App.tsx`, inside a `@react-navigation/native-stack`
+  (`src/navigation/`): Catalog → Cart → Confirm (`presentation: "modal"`). Call
+  `enableScreens()` once (also keeps `react-native-screens` a real, knip-visible
+  import).
+- Use the **static navigation API** (RN Navigation v7's recommended approach):
+  `createNativeStackNavigator({ screens })` + `createStaticNavigation` exported as
+  `Navigation` (it renders its own `NavigationContainer`, so `App.tsx` just
+  renders `<Navigation />`). The param list is INFERRED via
+  `StaticParamList<typeof RootStack>` and registered globally
+  (`declare global { namespace ReactNavigation { interface RootParamList … } }`),
+  so it can't drift from the screens and `useNavigation()` is typed everywhere
+  without per-screen generics. That global augmentation needs scoped
+  `eslint-disable`s for `no-namespace` + `no-empty-object-type` (module
+  augmentation has no non-namespace form — these are not avoidable like `as`).
+- The static config is built outside React and can't call `t()`, so localized
+  header titles are set per-screen via the `useScreenTitle(t("…"))` hook
+  (`navigation.setOptions` in a `useLayoutEffect`, so no title flash). Stack
+  actions not on the base `NavigationProp` (e.g. pop-to-top) go through
+  `navigation.dispatch(StackActions.popToTop())`.
+- Screens/components are thin `observer` views with NO business logic; all state
+  lives in the stores. They reach the `RootStore` via `StoreContext` +
+  `useStores()` (App provides the singleton; component tests can wrap with a mock
+  store) — they do NOT import the module singleton directly, and they get
+  navigation from `useNavigation()` (not a `navigation` prop).
+- **Paper `Portal`/`Dialog`/`Snackbar` inside a `presentation: "modal"` screen
+  MUST wrap that screen in its own `<Portal.Host>`.** `react-native-screens`
+  renders a native modal *above* `PaperProvider`'s root portal host, so a Dialog
+  using the root host mounts BEHIND the modal — the user sees no feedback (this
+  bit `ConfirmScreen`'s success/error dialogs). A local `Portal.Host` makes the
+  dialog render within the modal.
+- Catalog is a virtualized 1000-item `FlatList` with `getItemLayout` (fixed
+  `PRODUCT_ROW_HEIGHT`) + `memo(observer(ProductRow))` so only the edited row
+  re-renders. Money is formatted via the `useFormatPrice()` hook (locale follows
+  i18n language). `func-style: declaration` means `FlatList` callbacks
+  (`renderItem`/`keyExtractor`/`getItemLayout`) are module-level function
+  declarations, not arrow consts.
+
 ## Metro monorepo config
 `metro.config.js` sets `watchFolders: [monorepoRoot]` and
 `resolver.nodeModulesPaths: [app/node_modules, root/node_modules]` so Metro
@@ -60,8 +106,27 @@ resolves hoisted deps and sibling workspaces (e.g. `@comfort-b2b/shared`).
 Deps pre-installed for later phases (navigation, paper, i18next, etc.) are
 listed in `knip.json` under `workspaces["packages/mobile"].ignoreDependencies`.
 **Remove each from that list when its consuming phase actually imports it.**
-(`axios`/`zod`/`react-native-config` were removed in Phase 5; `mobx`/
-`mobx-react-lite` in Phase 6.)
+(`axios`/`zod`/`react-native-config` removed in Phase 5; `mobx`/
+`mobx-react-lite` in Phase 6; `i18next`/`react-i18next` in Phase 7;
+`@react-navigation/*`/`react-native-paper`/`react-native-screens` in Phase 8.)
+`react-native-vector-icons` STAYS ignored: it's a runtime peer of
+react-native-paper's icons that we never `import` directly, so knip can't see it.
+Its font IS wired natively though (see "Icon fonts" below).
+
+## Icon fonts (react-native-paper / react-native-vector-icons)
+Paper renders icons from the **MaterialCommunityIcons** font; without it linked
+you get `?`/tofu boxes instead of glyphs. We bundle ONLY that one font:
+- **iOS**: `Info.plist` registers `UIAppFonts: [MaterialCommunityIcons.ttf]`. The
+  RNVectorIcons pod already copies the `.ttf`s into the bundle
+  (`s.resources = "Fonts/*.ttf"`), so only the Info.plist registration is needed.
+- **Android**: `android/app/build.gradle` applies `react-native-vector-icons/
+  fonts.gradle` with `project.ext.vectoricons = { iconFontsDir, iconFontNames:
+  ['MaterialCommunityIcons.ttf'] }`. `iconFontsDir` MUST be the monorepo path
+  `../../../../node_modules/react-native-vector-icons/Fonts` (the gradle default
+  `../../node_modules` is wrong for hoisted workspace deps).
+- Changing fonts requires a **native rebuild** (`yarn ios` / `yarn android`), not
+  a Metro reload. If you add icons from another pack, add that `.ttf` to BOTH the
+  Info.plist array and the `iconFontNames` list.
 
 `App.tsx` is the only `entry`; it's the store composition root (constructs
 `RootStore` with the real `apiClient` functions and renders via `observer`), so

@@ -6,10 +6,6 @@
       "ignoreDependencies": [
         "@babel/preset-env",
         "@babel/runtime",
-        "@react-navigation/native",
-        "@react-navigation/native-stack",
-        "react-native-paper",
-        "react-native-screens",
         "react-native-vector-icons"
       ]
     }

@@ -127,6 +127,14 @@ Deterministic errors (no env needed):
   with bounded exponential-backoff retry, a monotonic `seq` guards the rolled-up
   `lastStatus` against a stale/retried older delivery, and the full denormalized
   product+option list is sent every time. Failed events expose a manual `retry`.
+- **Screens** (`packages/mobile/src/screens`, react-native-paper + a
+  `@react-navigation/native-stack` flow Catalog → Cart → Confirm-modal) are thin
+  `observer` views over the stores — no business logic. The `RootStore` is
+  provided through `StoreContext`/`useStores` (so component tests can inject a
+  mock), and the catalog is a virtualized 1000-item `FlatList` with
+  `getItemLayout` + a `memo(observer(ProductRow))` row so only the edited row
+  re-renders. Checkout is gated on `cart.meetsMinimum`; the confirm modal maps a
+  failed `OrderStore` submit to a localized error dialog with retry.
 
 ## Conventions
 
@@ -145,5 +153,5 @@ Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
 | 5     | Mobile api client (axios + zod) + runtime config   | ✅    |
 | 6     | MobX stores (catalog/cart/analytics/order)         | ✅    |
 | 7     | i18n (EN + RU)                                     | ✅    |
-| 8     | Screens (Catalog → Cart → Confirm)                 | ⏳    |
+| 8     | Screens (Catalog → Cart → Confirm)                 | ✅    |
 | 9     | Component tests + final polish                     | ⏳    |

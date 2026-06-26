@@ -18,7 +18,42 @@
     "pending": "Analytics queued",
     "sending": "Sending analytics…",
     "success": "Analytics delivered",
-    "failed": "Analytics delivery failed"
+    "failed": "Analytics delivery failed",
+    "retry": "Retry"
+  },
+  "catalog": {
+    "loading": "Loading catalog…",
+    "errorTitle": "Couldn't load the catalog",
+    "retry": "Retry",
+    "stock": "{{stock}} in stock",
+    "outOfStock": "Out of stock",
+    "viewCart": "View cart ({{items}}) · {{price}}"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty",
+    "browse": "Browse the catalog",
+    "optionsTitle": "Options",
+    "total": "Total",
+    "remove": "Remove",
+    "proceed": "Proceed to checkout",
+    "minHint": "Add {{amount}} more to reach the {{min}} minimum"
+  },
+  "confirm": {
+    "title": "Confirm order",
+    "summaryTitle": "Order summary",
+    "optionsTitle": "Options",
+    "noOptions": "No options selected",
+    "total": "Total",
+    "placeOrder": "Place order",
+    "cancel": "Cancel",
+    "placing": "Placing your order…",
+    "successTitle": "Order placed",
+    "successBody": "Order {{orderId}} confirmed",
+    "done": "Done",
+    "errorTitle": "Order failed",
+    "retry": "Retry",
+    "dismiss": "Dismiss"
   },
   "errors": {
     "SERVICE_UNAVAILABLE": "Service is temporarily unavailable. Please try again.",

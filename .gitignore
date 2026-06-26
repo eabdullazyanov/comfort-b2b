@@ -41,7 +41,9 @@ packages/mobile/android/.gradle/
 packages/mobile/android/build/
 packages/mobile/android/app/build/
 packages/mobile/android/local.properties
-packages/mobile/android/.cxx/
+# C++/CMake/NDK build intermediates — generated under android/app/.cxx (and
+# android/.cxx); match anywhere under the android dir, not just the root.
+packages/mobile/android/**/.cxx/
 packages/mobile/android/.kotlin/
 *.keystore
 !debug.keystore
