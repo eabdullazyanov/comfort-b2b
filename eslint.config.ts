@@ -85,6 +85,15 @@ export default defineConfig([
           alphabetize: { order: "asc", caseInsensitive: true },
         },
       ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.type='MemberExpression'][callee.object.name='z'][callee.property.name='object']",
+          message:
+            "Use z.strictObject() instead of z.object() to reject unknown keys.",
+        },
+      ],
       "unicorn/prevent-abbreviations": "off",
       "unicorn/no-null": "off",
       "unicorn/filename-case": [
@@ -105,6 +114,13 @@ export default defineConfig([
     files: ["**/*.test.{ts,tsx}"],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+  },
+  {
+    // env schemas validate process.env; unknown-key rejection is unnecessary here.
+    files: ["**/env.ts"],
+    rules: {
+      "no-restricted-syntax": "off",
     },
   },
   {

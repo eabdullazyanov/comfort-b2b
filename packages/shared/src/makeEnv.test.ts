@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { makeEnv } from "./makeEnv";
 
-const Schema = z.object({
+const Schema = z.strictObject({
   PORT: z.coerce.number().int().positive(),
   SEED: z.coerce.number().int().optional(),
 });

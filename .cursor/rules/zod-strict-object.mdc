@@ -1,0 +1,22 @@
+---
+description: Always use z.strictObject() instead of z.object() with Zod
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+# Zod: prefer `z.strictObject` over `z.object`
+
+Always use `z.strictObject()` — it rejects unknown keys at parse time, preventing
+silent data leaks and schema drift. `z.object()` is forbidden and will fail the
+ESLint `no-restricted-syntax` rule.
+
+```ts
+// ✅ correct
+const Foo = z.strictObject({ id: z.string() });
+
+// ❌ forbidden — ESLint error
+const Foo = z.object({ id: z.string() });
+```
+
+**Exception:** `env.ts` files may use `z.object()` — env schemas validate
+`process.env` and unknown-key rejection adds no value there. The ESLint rule
+is disabled for `**/env.ts` via an override in `eslint.config.ts`.

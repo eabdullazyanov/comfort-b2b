@@ -10,7 +10,7 @@ import { makeEnv } from "@comfort-b2b/shared/makeEnv";
  * `react-native-config` source into it.
  */
 export function makeMobileConfig(source: unknown) {
-  const schema = z.object({
+  const schema = z.strictObject({
     API_BASE_URL: z.url(),
   });
   return makeEnv(schema, source);

@@ -7,7 +7,7 @@ import { z } from "zod";
  * and consume the inferred type everywhere else - never `as`.
  */
 
-export const Product = z.object({
+export const Product = z.strictObject({
   id: z.string(),
   name: z.string(),
   price: z.number().int().positive(),
@@ -15,21 +15,21 @@ export const Product = z.object({
 });
 export type Product = z.infer<typeof Product>;
 
-export const OrderOption = z.object({
+export const OrderOption = z.strictObject({
   id: z.string(),
   label: z.string(),
 });
 export type OrderOption = z.infer<typeof OrderOption>;
 
 /** Wire shape for a single cart line sent to the backend. */
-export const CartLineDTO = z.object({
+export const CartLineDTO = z.strictObject({
   productId: z.string(),
   qty: z.number().int().positive(),
 });
 export type CartLineDTO = z.infer<typeof CartLineDTO>;
 
 /** A product line as recorded inside an analytics event (denormalized). */
-export const AnalyticsProduct = z.object({
+export const AnalyticsProduct = z.strictObject({
   id: z.string(),
   name: z.string(),
   price: z.number().int().nonnegative(),
@@ -37,7 +37,7 @@ export const AnalyticsProduct = z.object({
 });
 export type AnalyticsProduct = z.infer<typeof AnalyticsProduct>;
 
-export const AnalyticsEvent = z.object({
+export const AnalyticsEvent = z.strictObject({
   id: z.string(),
   createdAt: z.number().int().nonnegative(),
   products: z.array(AnalyticsProduct),
@@ -46,7 +46,7 @@ export const AnalyticsEvent = z.object({
 });
 export type AnalyticsEvent = z.infer<typeof AnalyticsEvent>;
 
-export const OrderPayload = z.object({
+export const OrderPayload = z.strictObject({
   lines: z.array(CartLineDTO),
   options: z.array(z.string()),
   total: z.number().int().nonnegative(),
@@ -62,7 +62,7 @@ export const ErrorCode = z.enum([
 export type ErrorCode = z.infer<typeof ErrorCode>;
 
 /** Error envelope returned by every failing backend route. */
-export const ErrorResponse = z.object({
+export const ErrorResponse = z.strictObject({
   code: ErrorCode,
   message: z.string(),
   productId: z.string().optional(),
@@ -76,9 +76,9 @@ export const CatalogResponse = z.array(Product);
 export type CatalogResponse = z.infer<typeof CatalogResponse>;
 
 /** Success envelope: `POST /analytics`. */
-export const AnalyticsAck = z.object({ ok: z.literal(true) });
+export const AnalyticsAck = z.strictObject({ ok: z.literal(true) });
 export type AnalyticsAck = z.infer<typeof AnalyticsAck>;
 
 /** Success envelope: `POST /orders`. */
-export const OrderAck = z.object({ orderId: z.string() });
+export const OrderAck = z.strictObject({ orderId: z.string() });
 export type OrderAck = z.infer<typeof OrderAck>;

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { parseResponse } from "./parseResponse";
 
-const Schema = z.object({ ok: z.boolean() });
+const Schema = z.strictObject({ ok: z.boolean() });
 
 describe("parseResponse", () => {
   afterEach(() => {
