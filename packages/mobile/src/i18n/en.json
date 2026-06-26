@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "comfort-b2b",
+    "minOrder": "Minimum order {{price}}",
+    "cartSummary": "{{products}} products · {{count}} in cart"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ru": "Russian"
+  },
+  "options": {
+    "express_delivery": "Express delivery",
+    "gift_wrap": "Gift wrapping",
+    "assembly": "Assembly service"
+  },
+  "analytics": {
+    "pending": "Analytics queued",
+    "sending": "Sending analytics…",
+    "success": "Analytics delivered",
+    "failed": "Analytics delivery failed"
+  },
+  "errors": {
+    "SERVICE_UNAVAILABLE": "Service is temporarily unavailable. Please try again.",
+    "INSUFFICIENT_STOCK": "Not enough stock for {{productName}}.",
+    "MIN_AMOUNT_NOT_REACHED": "Minimum order amount is {{min}}.",
+    "VALIDATION_ERROR": "Something is wrong with the request. Please review and try again."
+  }
+}

@@ -1,0 +1,32 @@
+---
+globs: packages/mobile/src/i18n/**,packages/mobile/src/components/**
+---
+
+# Mobile i18n (`@comfort-b2b/mobile`)
+
+i18next + react-i18next with EN + RU. Init lives in `src/i18n/i18n.ts`
+(`initReactI18next`, inline resources, no async backend), imported once for its
+side effect from `App.tsx`. Use the `useTranslation()` hook in components.
+
+## Typed `t()` without `as const`
+Resources are JSON bundles (`en.json`/`ru.json`). The `i18next`
+`CustomTypeOptions` augmentation (in `i18n.ts`) types keys off `typeof en` - a
+JSON import preserves the key structure, so NO `as const` is needed (the
+repo-wide `assertionStyle: "never"` rule bans assertions). Keep `ru.json` in
+parity with `en.json`; `i18n.test.ts` enforces identical key sets.
+
+## Error codes -> localized messages
+`localizeApiError(error)` maps a typed `ApiError` to a `errors.<CODE>`
+translation key + interpolation values, via an exhaustive `switch` with a
+`const _: never` guard (adding an `ErrorCode` is a compile error until handled
+here AND translated in both bundles).
+
+## Stable analytics labels vs translated display labels
+`ORDER_OPTIONS[].label` stays English - it is the stable string sent in the
+analytics payload. The UI displays each option via the localized
+`options.<id>` key (ids are a typed `OptionId` union so the key is type-checked).
+Never localize data sent to the backend/analytics.
+
+## Default language
+`i18n.ts` starts in `DEFAULT_LANGUAGE` ("en") - no device-locale auto-detection.
+Users switch language in-app via `LanguageSwitcher`.

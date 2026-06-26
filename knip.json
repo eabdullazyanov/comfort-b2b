@@ -8,8 +8,6 @@
         "@babel/runtime",
         "@react-navigation/native",
         "@react-navigation/native-stack",
-        "i18next",
-        "react-i18next",
         "react-native-paper",
         "react-native-screens",
         "react-native-vector-icons"

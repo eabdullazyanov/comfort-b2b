@@ -144,6 +144,6 @@ Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
 | 4     | `@comfort-b2b/mobile` RN scaffold + Metro monorepo | ✅    |
 | 5     | Mobile api client (axios + zod) + runtime config   | ✅    |
 | 6     | MobX stores (catalog/cart/analytics/order)         | ✅    |
-| 7     | i18n (EN + RU)                                     | ⏳    |
+| 7     | i18n (EN + RU)                                     | ✅    |
 | 8     | Screens (Catalog → Cart → Confirm)                 | ⏳    |
 | 9     | Component tests + final polish                     | ⏳    |

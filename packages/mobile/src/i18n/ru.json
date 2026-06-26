@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "comfort-b2b",
+    "minOrder": "Минимальный заказ {{price}}",
+    "cartSummary": "{{products}} товаров · {{count}} в корзине"
+  },
+  "language": {
+    "label": "Язык",
+    "en": "Английский",
+    "ru": "Русский"
+  },
+  "options": {
+    "express_delivery": "Экспресс-доставка",
+    "gift_wrap": "Подарочная упаковка",
+    "assembly": "Сборка"
+  },
+  "analytics": {
+    "pending": "Аналитика в очереди",
+    "sending": "Отправка аналитики…",
+    "success": "Аналитика отправлена",
+    "failed": "Не удалось отправить аналитику"
+  },
+  "errors": {
+    "SERVICE_UNAVAILABLE": "Сервис временно недоступен. Попробуйте ещё раз.",
+    "INSUFFICIENT_STOCK": "Недостаточно товара: {{productName}}.",
+    "MIN_AMOUNT_NOT_REACHED": "Минимальная сумма заказа — {{min}}.",
+    "VALIDATION_ERROR": "Что-то не так с запросом. Проверьте данные и попробуйте снова."
+  }
+}

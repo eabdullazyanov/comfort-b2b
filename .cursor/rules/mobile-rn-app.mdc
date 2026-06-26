@@ -66,6 +66,9 @@ listed in `knip.json` under `workspaces["packages/mobile"].ignoreDependencies`.
 `App.tsx` is the only `entry`; it's the store composition root (constructs
 `RootStore` with the real `apiClient` functions and renders via `observer`), so
 the whole `src/**` graph (`apiClient`, `config`, stores) is reachable from it.
+It also imports `./src/i18n/i18n` for its init side effect and renders
+`LanguageSwitcher`, so the whole `src/i18n/**` graph is reachable too.
+(`i18next`/`react-i18next` were removed from `ignoreDependencies` in Phase 7.)
 
 ## Native projects
 `android/` and `ios/` are committed but ignored by lint/prettier/knip and not
