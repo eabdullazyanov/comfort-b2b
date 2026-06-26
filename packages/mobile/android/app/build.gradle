@@ -118,3 +118,13 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// react-native-vector-icons fonts (react-native-paper's icons). Only the
+// MaterialCommunityIcons pack is used. The default iconFontsDir assumes
+// ../../node_modules, but in this Yarn-workspaces monorepo deps hoist to the
+// repo-root node_modules (four levels up from packages/mobile/android/app).
+project.ext.vectoricons = [
+    iconFontsDir: "../../../../node_modules/react-native-vector-icons/Fonts",
+    iconFontNames: [ 'MaterialCommunityIcons.ttf' ]
+]
+apply from: file("../../../../node_modules/react-native-vector-icons/fonts.gradle")
