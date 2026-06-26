@@ -136,7 +136,37 @@ Deterministic errors (no env needed):
   re-renders. Checkout is gated on `cart.meetsMinimum`; the confirm modal maps a
   failed `OrderStore` submit to a localized error dialog with retry.
 
-## Conventions
+## Testing
+
+`yarn test` runs **two Jest projects** in parallel:
+
+| Project     | Match        | Purpose                                                  |
+| ----------- | ------------ | -------------------------------------------------------- |
+| `node`      | `*.test.ts`  | Unit tests (shared schemas, backend routes, MobX stores) |
+| `mobile-ui` | `*.test.tsx` | Component tests (`@testing-library/react-native`)        |
+
+### Component tests (`*.test.tsx`)
+
+The `mobile-ui` project uses a lightweight mock strategy instead of a full React
+Native preset (which requires a native environment):
+
+- **`react-native`** is replaced by `packages/mobile/__mocks__/react-native.tsx`
+  — host components (`View`, `Text`, etc.) render as string-typed React elements
+  so RNTL can query them via `getByText`/`getByLabelText`/`getByRole`.
+- **`react-native-paper`** is replaced by
+  `packages/mobile/__mocks__/react-native-paper.tsx` — each widget forwards
+  the accessibility props (`accessibilityRole`, `accessibilityState.disabled`,
+  `accessibilityLabel`) that RNTL's `toBeDisabled()` and `getByRole` rely on.
+- **`react-i18next`**, **`@react-navigation/native`**, and the two project hooks
+  (`useFormatPrice`, `useScreenTitle`) are replaced via `moduleNameMapper` so
+  they're always stubbed regardless of `@swc/jest`'s hoisting behaviour.
+- All module replacements are declared once in `jest.config.ts`; test files
+  contain no `jest.mock()` calls.
+- Components are wrapped in a real `StoreContext.Provider` backed by a
+  `new RootStore(...)` with mocked API functions — no `as unknown as RootStore`
+  type-assertion shortcuts.
+
+### Conventions
 
 Coding conventions (no-`as`, one-util-per-file, no barrels, import/order,
 Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
@@ -154,4 +184,4 @@ Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
 | 6     | MobX stores (catalog/cart/analytics/order)         | ✅    |
 | 7     | i18n (EN + RU)                                     | ✅    |
 | 8     | Screens (Catalog → Cart → Confirm)                 | ✅    |
-| 9     | Component tests + final polish                     | ⏳    |
+| 9     | Component tests + final polish                     | ✅    |

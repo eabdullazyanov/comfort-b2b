@@ -5,5 +5,5 @@
     "lib": ["ES2022"],
     "types": ["react", "react-native"]
   },
-  "include": ["src/**/*", "App.tsx"]
+  "include": ["src/**/*", "App.tsx", "__mocks__/**/*", "jest.rn-setup.ts"]
 }

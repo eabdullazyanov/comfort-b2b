@@ -1,0 +1,61 @@
+---
+description: Pattern for mobile component tests using @testing-library/react-native
+globs: ["packages/mobile/**/*.test.tsx"]
+alwaysApply: false
+---
+# Mobile Component Tests (`*.test.tsx`)
+
+Component tests live next to the component (`ComponentName.test.tsx`) and run
+under the `mobile-ui` Jest project (see `jest.config.ts`).
+
+## Mock strategy — `moduleNameMapper` only, no `jest.mock()`
+
+All module replacements live in `jest.config.ts`'s `rnMocks` map:
+
+| Module | Mock file |
+|---|---|
+| `react-native` | `packages/mobile/__mocks__/react-native.tsx` |
+| `react-native-paper` | `packages/mobile/__mocks__/react-native-paper.tsx` |
+| `react-dom` | `packages/mobile/__mocks__/react-dom.tsx` |
+| `react-i18next` | `packages/mobile/__mocks__/react-i18next.tsx` |
+| `@react-navigation/native` | `packages/mobile/__mocks__/react-navigation-native.tsx` |
+| `.*useFormatPrice$` | `packages/mobile/__mocks__/useFormatPrice.ts` |
+| `.*navigation/useScreenTitle$` | `packages/mobile/__mocks__/useScreenTitle.ts` |
+
+**Do NOT add `jest.mock()` calls to test files** — `@swc/jest` does not hoist
+them reliably; `moduleNameMapper` substitutes modules before any module loads.
+
+## Store injection
+
+Always provide a real `RootStore` via `StoreContext.Provider`. Never use `as
+unknown as RootStore` — construct a real instance with mocked API functions:
+
+```tsx
+function makeRoot(): RootStore {
+  return new RootStore(
+    {
+      fetchCatalog: () => Promise.resolve([...]),
+      sendAnalytics: () => Promise.resolve({ ok: true }),
+      submitOrder: () => Promise.resolve({ orderId: "TEST" }),
+    },
+    { debounceMs: 0 },
+  );
+}
+```
+
+Call `root.dispose()` in `afterEach`.
+
+## Rendering
+
+`render()` and `fireEvent.*` from RNTL v14 are async — always `await` them:
+
+```tsx
+await render(<StoreContext.Provider value={root}><MyScreen /></StoreContext.Provider>);
+await act(async () => { await fireEvent.press(screen.getByLabelText("increment")); });
+```
+
+## JSX runtime
+
+`@swc/jest` is configured with `jsc.transform.react.runtime: "automatic"`.
+**Do not `import React from "react"`** in test files — it's unused and will
+trigger `@typescript-eslint/no-unused-vars`.

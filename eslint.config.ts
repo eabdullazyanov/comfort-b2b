@@ -107,5 +107,29 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-assignment": "off",
     },
   },
+  {
+    /**
+     * Jest `__mocks__` files are intentional module stubs.
+     * - Filenames must match the module they replace (e.g. `react-native.tsx`)
+     *   so kebab-case is intentional and `unicorn/filename-case` is disabled.
+     * - Empty function bodies are valid no-op stubs for unused callbacks.
+     * - Type assertions are sometimes necessary to satisfy the mocked types.
+     * - Import order within these utility files is relaxed.
+     * - Unused parameters in stub signatures are documented noise.
+     */
+    files: [
+      "packages/mobile/__mocks__/**/*.{ts,tsx}",
+      "packages/mobile/jest.rn-setup.ts",
+    ],
+    rules: {
+      "unicorn/filename-case": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/consistent-type-assertions": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "import/order": "off",
+    },
+  },
   prettier,
 ]);
