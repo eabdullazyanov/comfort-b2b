@@ -1,0 +1,45 @@
+---
+globs: packages/mobile/src/stores/**/*.ts
+---
+
+# MobX stores (`@comfort-b2b/mobile`)
+
+One store per file (a class), co-located `*.test.ts`. Live in
+`packages/mobile/src/stores`. `RootStore` is the composition root that wires the
+others and owns the cart→analytics `reaction`.
+
+## Dependency-inject the API, never import it into a store
+Stores take their API functions (`fetchCatalog`/`sendAnalytics`/`submitOrder`)
+as constructor params (function-typed), and inter-store deps (e.g. the catalog)
+as params too. `RootStore` takes an `ApiDeps` object; the composition root in
+`App.tsx` passes the real `apiClient` functions. **Reason:** importing
+`apiClient` pulls in `config.ts` → `react-native-config`, which throws on the
+missing `API_BASE_URL` in the Jest node env. DI keeps stores out of that chain so
+they unit-test with plain mocks (no RN preset, no react-native-config stub).
+
+## mobx + TypeScript `private` fields
+`keyof this` excludes `private`/`protected` members, so a private field can't be
+named in `makeAutoObservable`'s typed annotations map without help. Pass the key
+via the `AdditionalKeys` generic:
+
+```ts
+makeAutoObservable<CartStore, "catalog">(this, { catalog: false });
+```
+
+Assign injected deps to regular declared fields in the constructor body (NOT
+constructor parameter properties) before calling `makeAutoObservable`/
+`makeObservable` — parameter properties are likewise absent from `keyof this`.
+
+## Use `makeObservable` when there's non-observable plumbing
+A store with queues/counters/timers (e.g. `AnalyticsStore`) uses explicit
+`makeObservable` listing ONLY the observable state + the `action` methods;
+everything else stays plain. Always wrap observable mutations that run **after
+an `await`** (or from a `setTimeout`) in `runInAction`.
+
+## Analytics delivery contract
+`AnalyticsStore` is a reliable queue, not a fire-and-forget call: debounce rapid
+edits into one event, deliver strictly in order, retry with bounded exponential
+backoff, guard the rolled-up `lastStatus` with a monotonic `seq` (an older /
+manually-retried delivery must never clobber a newer event's status), keep an
+audit log (`records`), and send the FULL denormalized product+option list every
+time.

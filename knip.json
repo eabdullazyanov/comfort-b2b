@@ -2,15 +2,13 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     "packages/mobile": {
-      "entry": ["App.tsx", "src/apiClient.ts"],
+      "entry": ["App.tsx"],
       "ignoreDependencies": [
         "@babel/preset-env",
         "@babel/runtime",
         "@react-navigation/native",
         "@react-navigation/native-stack",
         "i18next",
-        "mobx",
-        "mobx-react-lite",
         "react-i18next",
         "react-native-paper",
         "react-native-screens",

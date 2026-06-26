@@ -113,8 +113,20 @@ Deterministic errors (no env needed):
   the validation error but still passes the payload through rather than throwing.
 - **Seedable faults**: the backend's randomness is a seedable RNG, so each error
   branch is forceable in tests and reproducible by setting `SEED`.
-- **MobX stores** (app) keep business logic out of components; an analytics
-  delivery queue fires on every cart change with retry/backoff.
+- **MobX stores** (app, `packages/mobile/src/stores`) keep business logic out of
+  components. `CatalogStore` loads the catalog; `CartStore` holds the
+  `productId → qty` map + selected options and derives `total`/`meetsMinimum`/the
+  analytics & order snapshots; `OrderStore` submits and clears the cart;
+  `RootStore` wires them and runs a single `reaction` on the cart's
+  `analyticsKey` so every cart/option change fires analytics. All API functions
+  are **dependency-injected** into the stores (the composition root in `App.tsx`
+  passes the real `apiClient`), so the stores unit-test with mocks and never
+  import React Native config.
+- **`AnalyticsStore` is a reliable delivery queue**: rapid edits are debounced
+  into one event, events deliver strictly in order through a sequential queue
+  with bounded exponential-backoff retry, a monotonic `seq` guards the rolled-up
+  `lastStatus` against a stale/retried older delivery, and the full denormalized
+  product+option list is sent every time. Failed events expose a manual `retry`.
 
 ## Conventions
 
@@ -131,7 +143,7 @@ Prettier, the RN CommonJS exceptions, etc.) are defined and enforced in
 | 3     | `@comfort-b2b/backend` Express + seedable faults   | ✅    |
 | 4     | `@comfort-b2b/mobile` RN scaffold + Metro monorepo | ✅    |
 | 5     | Mobile api client (axios + zod) + runtime config   | ✅    |
-| 6     | MobX stores (catalog/cart/analytics/order)         | ⏳    |
+| 6     | MobX stores (catalog/cart/analytics/order)         | ✅    |
 | 7     | i18n (EN + RU)                                     | ⏳    |
 | 8     | Screens (Catalog → Cart → Confirm)                 | ⏳    |
 | 9     | Component tests + final polish                     | ⏳    |

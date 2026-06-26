@@ -57,15 +57,15 @@ resolves hoisted deps and sibling workspaces (e.g. `@comfort-b2b/shared`).
 `types: ["react", "react-native"]`.
 
 ## knip
-Deps pre-installed for later phases (navigation, mobx, paper, i18next, etc.) are
+Deps pre-installed for later phases (navigation, paper, i18next, etc.) are
 listed in `knip.json` under `workspaces["packages/mobile"].ignoreDependencies`.
 **Remove each from that list when its consuming phase actually imports it.**
-(`axios`/`zod`/`react-native-config` were removed in Phase 5.)
+(`axios`/`zod`/`react-native-config` were removed in Phase 5; `mobx`/
+`mobx-react-lite` in Phase 6.)
 
-`src/apiClient.ts` is a temporary extra `entry` in `knip.json` so its (and
-`config.ts`'s) public surface isn't flagged as unused before the Phase 6 stores
-consume it. **Remove that entry once a store reachable from `App.tsx` imports
-the client.**
+`App.tsx` is the only `entry`; it's the store composition root (constructs
+`RootStore` with the real `apiClient` functions and renders via `observer`), so
+the whole `src/**` graph (`apiClient`, `config`, stores) is reachable from it.
 
 ## Native projects
 `android/` and `ios/` are committed but ignored by lint/prettier/knip and not
