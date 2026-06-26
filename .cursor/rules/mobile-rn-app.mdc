@@ -41,10 +41,11 @@ type guards instead).
 - `config.ts` (RN wiring: `react-native-config`) delegates to the pure,
   unit-tested `makeMobileConfig.ts` (shared `makeEnv` + zod). Keep RN imports out
   of testable helpers so Jest (node env, no RN preset) can run them.
-- `API_BASE_URL` is REQUIRED (no default) - a missing/invalid value throws at
-  startup rather than silently defaulting (dangerous in prod). Set it per build
-  via `packages/mobile/.env` (see `.env.example`): `10.0.2.2` for the Android
-  emulator, `localhost` for the iOS simulator.
+- `API_BASE_URL` has a `__DEV__`-only default in `config.ts` (via `Platform.OS`:
+  `10.0.2.2:3000` for Android emulator, `localhost:3000` for iOS simulator) so no
+  `.env` file is needed for local development. In production `__DEV__` is false
+  and a missing `API_BASE_URL` still throws at startup. Use `.env` only to
+  override (real device, staging, etc.).
 - `apiClient.ts` is the axios instance; its response interceptor funnels EVERY
   failure through `toApiError.ts` so callers only ever catch one type: `ApiError`
   (a custom `Error` subclass discriminated by `code: ErrorCode`).

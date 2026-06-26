@@ -65,7 +65,8 @@ yarn workspace @comfort-b2b/mobile ios
 yarn workspace @comfort-b2b/mobile android
 ```
 
-**Reaching the backend from a device/emulator:** copy
-`packages/mobile/.env.example` → `packages/mobile/.env` and set `API_BASE_URL`.
-The host's `localhost` is `http://10.0.2.2:3000` from the Android emulator and
-`http://localhost:3000` from the iOS simulator.
+**Reaching the backend from a device/emulator:** no setup needed for the iOS
+simulator or Android emulator — the app picks the correct localhost URL
+automatically (`localhost:3000` on iOS, `10.0.2.2:3000` on Android). To point at
+a non-localhost backend (real device, staging), create
+`packages/mobile/.env` with `API_BASE_URL=<url>` (see `.env.example`).
